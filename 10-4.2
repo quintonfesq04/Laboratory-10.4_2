@@ -1,0 +1,87 @@
+/*
+Quinton Fesq
+November 10 2022
+P10-2
+revise the program written in P10-1 such that it works with 16-digit credit
+card numbers
+*/
+
+#include <iostream>
+#include <ctime>
+#include <iomanip>
+using namespace std;
+
+bool isNumeric(string s);
+bool isCorrectLength(string s);
+bool isCardValid(int digits[], int size);
+
+int main() {
+    const int size = 16;
+    int digits[size];
+    string input;
+    bool done = false;
+
+    while (!done) {
+        cout << "Enter a 16-digit credit card # or Q to quit: ";
+        cin >> input;
+
+        if (input == "Q" || input == "q") {
+            done = true;
+            break;
+        }
+
+        if (isNumeric(input) && isCorrectLength(input)) {
+            for (int n = 0; n < size; n++) {
+                digits[n] = input[n] - '0';
+            }
+
+            if (isCardValid(digits, size)) {
+                cout << "Card is valid." << endl;
+            } else {
+                cout << "Card is not valid." << endl;
+            }
+        } else {
+            cout << "Error - ";
+            if (!isNumeric(input)) {
+                cout << "card number must contain only digits." << endl;
+            } else if (!isCorrectLength(input)) {
+                cout << "card number must contain 16 digits." << endl;
+            }
+        }
+    }
+
+    return 0;
+}
+
+bool isNumeric(string s) {
+    for (char c : s) {
+        if (!isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool isCorrectLength(string s) {
+    return s.length() == 16;
+}
+
+bool isCardValid(int digits[], int size) {
+    int firstSum = 0;
+    for (int i = 15; i > 0; i = i - 2) {
+        firstSum = firstSum + digits[i];
+    }
+
+    int Double;
+    int sumDouble;
+    int x = 0;
+    for (int t = 0; t < size - 1; t = t + 2) {
+        Double = digits[t] * 2;
+        sumDouble = Double / 10;
+        Double = Double - (sumDouble * 10);
+
+        x = x + (sumDouble + Double);
+    }
+
+    return (firstSum + x) % 10 == 0;
+}
